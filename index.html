@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fissal Prime • Complete Routing & Logic Flow</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --brass-gold: #f59e0b;
+      --brass-glow: rgba(245, 158, 11, 0.4);
+      --masser-crimson: #ef4444;
+      --secunda-silver: #94a3b8;
+      --bedrock-dark: #090d16;
+      --card-bg: #111827;
+      --emerald-safe: #10b981;
+      --cyan-stream: #06b6d4;
+      --purple-neural: #a855f7;
+    }
+    body {
+      background-color: #080c14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    .brass-border {
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.1);
+    }
+    .brass-glow-hover:hover {
+      border-color: rgba(245, 158, 11, 0.8);
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+      transform: translateY(-2px);
+    }
+    .node-card {
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+    .node-active {
+      border-color: #f59e0b !important;
+      background: linear-gradient(145deg, #1e293b, #0f172a) !important;
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.45) !important;
+      transform: scale(1.02);
+    }
+    .node-dimmed {
+      opacity: 0.35;
+      filter: grayscale(0.6);
+    }
+    .pulse-glow {
+      animation: pulse-ring 2.5s infinite;
+    }
+    @keyframes pulse-ring {
+      0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+      70% { box-shadow: 0 0 0 12px rgba(245, 158, 11, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090d16;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #f59e0b;
+    }
+  </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen text-slate-100 flex flex-col justify-between">
+
+  <!-- Header Banner -->
+  <header class="max-w-7xl mx-auto w-full mb-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 bg-slate-900/90 rounded-2xl brass-border backdrop-blur-md">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-3xl shadow-inner shadow-amber-500/20">
+          🐾
+        </div>
+        <div>
+          <div class="flex items-center gap-3">
+            <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-amber-400">Fissal Prime • Sovereign Routing Architecture</h1>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/40 text-emerald-400 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Live Relay
+            </span>
+          </div>
+          <p class="text-slate-400 text-sm mt-1">
+            End-to-end signal dispatch from edge clients, through guardrail gates, neural memory, Fido retrieval hound, to homelab bedrock.
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick Origin Filter Bar -->
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="text-xs uppercase font-semibold text-slate-400 mr-1 tracking-wider">Highlight Origin:</span>
+        <button onclick="filterOrigin('all')" id="btn-all" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-amber-500 text-slate-950 font-bold transition">All Arteries</button>
+        <button onclick="filterOrigin('antigravity')" id="btn-antigravity" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Antigravity</button>
+        <button onclick="filterOrigin('android')" id="btn-android" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Fissal Prime (Android)</button>
+        <button onclick="filterOrigin('relay')" id="btn-relay" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Fissal Relay (Win)</button>
+        <button onclick="filterOrigin('dashboard')" id="btn-dashboard" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Redfur Web (:8091)</button>
+        <button onclick="filterOrigin('discord')" id="btn-discord" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition">RedfurBot (:5101)</button>
+        <button onclick="filterOrigin('sensors')" id="btn-sensors" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Frigate / IoT</button>
+      </div>
+    </div>
+
+    <!-- Active Route Breadcrumb & Simulator Control -->
+    <div class="mt-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 p-4 bg-slate-950/70 border border-slate-800 rounded-xl text-sm">
+      <div class="flex items-center gap-2 overflow-x-auto text-xs text-slate-400 py-1">
+        <span class="text-amber-400 font-semibold uppercase tracking-wider">Active Flow Path:</span>
+        <span id="route-path-display" class="font-mono text-cyan-300 bg-slate-900 px-2.5 py-1 rounded border border-slate-800">
+          Edge Ingestion ➔ Guardrail Gates ➔ Intent Switchboard ➔ Model & Fido Core ➔ Bedrock MCP Execution ➔ Grounded Response
+        </span>
+      </div>
+      <div class="flex items-center gap-2">
+        <select id="sim-scenario" class="bg-slate-900 border border-slate-700 rounded-lg text-xs text-slate-200 px-3 py-1.5 focus:border-amber-400 focus:outline-none">
+          <option value="code_refactor">⚡ Scenario: Antigravity Code Refactor</option>
+          <option value="mobile_trade">📈 Scenario: Android App Robinhood Scan</option>
+          <option value="frigate_alert">🚨 Scenario: Frigate Perimeter Alert to Discord</option>
+          <option value="memory_query">🧠 Scenario: Web UI Qdrant Memory Lookup</option>
+          <option value="destruct_gate">🛡️ Scenario: Block Destructive Command (ADLP)</option>
+        </select>
+        <button onclick="runSimulation()" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 shadow-md transition flex items-center gap-1.5 whitespace-nowrap">
+          <span>▶</span> Trace Signal
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Pipeline Stages Container -->
+  <main class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start mb-8">
+
+    <!-- Interactive Canvas / Flow Column (8 Cols) -->
+    <div class="lg:col-span-8 space-y-6">
+
+      <!-- STAGE 1: Edge Ingestion & Origins -->
+      <section class="bg-slate-900/60 p-5 rounded-2xl border border-slate-800">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs font-bold border border-cyan-500/30">1</span>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300">Edge Ingestion & Origin Arteries</h2>
+          </div>
+          <span class="text-xs text-slate-400">Multiple entry vectors, singular brain</span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <!-- Antigravity -->
+          <div onclick="selectNode('antigravity')" id="node-antigravity" class="node-card bg-slate-900/90 border border-slate-700/80 rounded-xl p-3 brass-glow-hover origin-node" data-origins="antigravity">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+              <span class="text-amber-400 font-semibold">Windows IDE/CLI</span>
+              <span>Dev Node</span>
+            </div>
+            <div class="font-bold text-slate-100 flex items-center gap-2 text-sm">
+              <span>⚡</span> Antigravity CLI
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1 line-clamp-2">Autonomous agent, pair-programming loop, MCP client, subagents.</p>
+          </div>
+
+          <!-- Fissal Prime (Android) -->
+          <div onclick="selectNode('android')" id="node-android" class="node-card bg-slate-900/90 border border-slate-700/80 rounded-xl p-3 brass-glow-hover origin-node" data-origins="android">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+              <span class="text-cyan-400 font-semibold">Mobile Edge</span>
+              <span>WireGuard</span>
+            </div>
+            <div class="font-bold text-slate-100 flex items-center gap-2 text-sm">
+              <span>📱</span> Fissal Prime (App)
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1 line-clamp-2">Android edge client, voice/text relay, push alerts, geo-awareness.</p>
+          </div>
+
+          <!-- Fissal Relay (Windows Program) -->
+          <div onclick="selectNode('relay')" id="node-relay" class="node-card bg-slate-900/90 border border-slate-700/80 rounded-xl p-3 brass-glow-hover origin-node" data-origins="relay">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+              <span class="text-indigo-400 font-semibold">Desktop Daemon</span>
+              <span>Local Bridge</span>
+            </div>
+            <div class="font-bold text-slate-100 flex items-center gap-2 text-sm">
+              <span>🖥️</span> Fissal Relay
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1 line-clamp-2">Windows background service, clipboard & file watcher, system tray relay.</p>
+          </div>
+
+          <!-- Redfur Dashboard -->
+          <div onclick="selectNode('dashboard')" id="node-dashboard" class="node-card bg-slate-900/90 border border-slate-700/80 rounded-xl p-3 brass-glow-hover origin-node" data-origins="dashboard">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+              <span class="text-emerald-400 font-semibold">Port 8091 / 3001</span>
+              <span>Web Interface</span>
+            </div>
+            <div class="font-bold text-slate-100 flex items-center gap-2 text-sm">
+              <span>📊</span> Redfur Dashboard
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1 line-clamp-2">SolidJS/WebUI widget, token metrics, model router, test lab.</p>
+          </div>
+
+          <!-- RedfurBot Discord -->
+          <div onclick="selectNode('discord')" id="node-discord" class="node-card bg-slate-900/90 border border-slate-700/80 rounded-xl p-3 brass-glow-hover origin-node" data-origins="discord">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+              <span class="text-purple-400 font-semibold">Port 5101 (PM2)</span>
+              <span>Community Fleet</span>
+            </div>
+            <div class="font-bold text-slate-100 flex items-center gap-2 text-sm">
+              <span>🤖</span> RedfurBot
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1 line-clamp-2">Discord agent, guild fleet interactions, trade pings, voice channel.</p>
+          </div>
+
+          <!-- Sensors / Frigate -->
+          <div onclick="selectNode('sensors')" id="node-sensors" class="node-card bg-slate-900/90 border border-slate-700/80 rounded-xl p-3 brass-glow-hover origin-node" data-origins="sensors">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+              <span class="text-rose-400 font-semibold">Port 5000 / 8090</span>
+              <span>Hardware IoT</span>
+            </div>
+            <div class="font-bold text-slate-100 flex items-center gap-2 text-sm">
+              <span>👁️</span> Frigate & Tuya
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1 line-clamp-2">NVR perimeter vision AI, camera brain triggers, smart light relays.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Flow Connector 1 -->
+      <div class="flex justify-center -my-3 relative z-10">
+        <div class="px-3 py-1 bg-slate-800 border border-slate-700 text-[11px] font-mono text-cyan-400 rounded-full flex items-center gap-1.5 shadow">
+          <span>↓ Tailscale Mesh (tailscale.mesh) / Local LAN (homelab.local) / Native SMB ↓</span>
+        </div>
+      </div>
+
+      <!-- STAGE 2: Guardrails & Safety Gates -->
+      <section class="bg-slate-900/60 p-5 rounded-2xl border border-slate-800">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold border border-emerald-500/30">2</span>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300">Security Guardrails & Logic Gates</h2>
+          </div>
+          <span class="text-xs text-emerald-400 font-mono">Zero-Downtime Policy</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- Gate: Auth & Identity -->
+          <div onclick="selectNode('gate_auth')" id="node-gate_auth" class="node-card bg-slate-900/90 border border-slate-700/80 rounded-xl p-3 brass-glow-hover">
+            <div class="text-emerald-400 text-xs font-bold mb-1 flex items-center gap-1">
+              <span>🔑</span> Gate 1: Zero-Trust Origin
+            </div>
+            <div class="text-xs font-semibold text-slate-200">Mesh & Token Verification</div>
+            <p class="text-[11px] text-slate-400 mt-1">Validates Tailscale peer keys, session bearer tokens, and internal LAN IPs.</p>
+          </div>
+
+          <!-- Gate: Accidental Data Loss Prevention -->
+          <div onclick="selectNode('gate_adlp')" id="node-gate_adlp" class="node-card bg-slate-900/90 border border-rose-500/40 rounded-xl p-3 brass-glow-hover">
+            <div class="text-rose-400 text-xs font-bold mb-1 flex items-center gap-1">
+              <span>🛡️</span> Gate 2: ADLP Guardrail
+            </div>
+            <div class="text-xs font-semibold text-slate-200">Accidental Data Loss Shield</div>
+            <p class="text-[11px] text-slate-400 mt-1">Intercepts DROP, TRUNCATE, `rm -rf`, volume wipes. Halts for explicit user OK.</p>
+          </div>
+
+          <!-- Gate: The 13 Rule & Budgeter -->
+          <div onclick="selectNode('gate_budget')" id="node-gate_budget" class="node-card bg-slate-900/90 border border-amber-500/40 rounded-xl p-3 brass-glow-hover">
+            <div class="text-amber-400 text-xs font-bold mb-1 flex items-center gap-1">
+              <span>⚖️</span> Gate 3: The 13 Rule
+            </div>
+            <div class="text-xs font-semibold text-slate-200">Grounded Budgeting</div>
+            <p class="text-[11px] text-slate-400 mt-1">Restricts unbounded loops, enforces hypothesis anchoring, guards context size.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Flow Connector 2 -->
+      <div class="flex justify-center -my-3 relative z-10">
+        <div class="px-3 py-1 bg-slate-800 border border-slate-700 text-[11px] font-mono text-amber-400 rounded-full flex items-center gap-1.5 shadow">
+          <span>↓ Intent Switchboard & Dispatch Matrix ↓</span>
+        </div>
+      </div>
+
+      <!-- STAGE 3: Intent Classifier & Model Router -->
+      <section class="bg-slate-900/60 p-5 rounded-2xl border border-slate-800">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs font-bold border border-purple-500/30">3</span>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300">Model Routing & Fissal's Fido Hound</h2>
+          </div>
+          <span class="text-xs text-purple-400 font-mono">Hybrid Cloud / Local Core</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+          <!-- Gemini Cloud Plane -->
+          <div onclick="selectNode('route_gemini')" id="node-route_gemini" class="node-card bg-slate-900/90 border border-blue-500/40 rounded-xl p-3 brass-glow-hover">
+            <div class="flex items-center justify-between text-xs text-blue-400 font-semibold mb-1">
+              <span>✨ Google Gemini Cloud Plane</span>
+              <span>Interactions API</span>
+            </div>
+            <div class="font-semibold text-slate-100 text-xs">Gemini 3.8 Flash • Pro • Flash-Lite</div>
+            <p class="text-[11px] text-slate-400 mt-1">Multi-modal reasoning, large refactors, live code analysis, fast streaming generation.</p>
+          </div>
+
+          <!-- Ollama Local Bedrock -->
+          <div onclick="selectNode('route_ollama')" id="node-route_ollama" class="node-card bg-slate-900/90 border border-emerald-500/40 rounded-xl p-3 brass-glow-hover">
+            <div class="flex items-center justify-between text-xs text-emerald-400 font-semibold mb-1">
+              <span>🏠 Host Ollama (:11434)</span>
+              <span>homelab-core</span>
+            </div>
+            <div class="font-semibold text-slate-100 text-xs">Local Bedrock LLMs & Embeddings</div>
+            <p class="text-[11px] text-slate-400 mt-1">`mxbai-embed-large`, `nomic-embed-text`, 100% private offline fallback inference.</p>
+          </div>
+        </div>
+
+        <!-- Fido Tool Retrieval Hound & Qdrant Vector Memory -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <!-- Fissal's Fido -->
+          <div onclick="selectNode('core_fido')" id="node-core_fido" class="node-card bg-slate-900/90 border border-amber-500/50 rounded-xl p-3 brass-glow-hover">
+            <div class="flex items-center justify-between text-xs text-amber-400 font-bold mb-1">
+              <span class="flex items-center gap-1.5">🐶 Fissal's Fido (Hound)</span>
+              <span class="text-[10px] bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/30">EAP Retriever</span>
+            </div>
+            <div class="text-xs font-semibold text-slate-100">Dynamic Tool Schema Retrieval</div>
+            <p class="text-[11px] text-slate-400 mt-1">Surgically retrieves 2-4 tool schemas from 80+ catalog without bloating prompt context.</p>
+          </div>
+
+          <!-- Qdrant Vector DB -->
+          <div onclick="selectNode('core_qdrant')" id="node-core_qdrant" class="node-card bg-slate-900/90 border border-purple-500/50 rounded-xl p-3 brass-glow-hover">
+            <div class="flex items-center justify-between text-xs text-purple-400 font-bold mb-1">
+              <span class="flex items-center gap-1.5">🧠 Qdrant Vector DB (:6333)</span>
+              <span class="text-[10px] bg-purple-500/10 px-1.5 py-0.5 rounded border border-purple-500/30">Persistent</span>
+            </div>
+            <div class="text-xs font-semibold text-slate-100">Neural Memory & Code Embeddings</div>
+            <p class="text-[11px] text-slate-400 mt-1">Anti-amnesia semantic recall over codebase, historical decisions, and purpose matrix.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Flow Connector 3 -->
+      <div class="flex justify-center -my-3 relative z-10">
+        <div class="px-3 py-1 bg-slate-800 border border-slate-700 text-[11px] font-mono text-emerald-400 rounded-full flex items-center gap-1.5 shadow">
+          <span>↓ Surgical Execution & Tool Dispatch ↓</span>
+        </div>
+      </div>
+
+      <!-- STAGE 4: MCP Tools & Execution Bedrock -->
+      <section class="bg-slate-900/60 p-5 rounded-2xl border border-slate-800">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs font-bold border border-amber-500/30">4</span>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300">Tool Execution Plane & Homelab Bedrock</h2>
+          </div>
+          <span class="text-xs text-amber-400 font-mono">MCP Protocol</span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <!-- Robinhood MCP -->
+          <div onclick="selectNode('exec_trading')" id="node-exec_trading" class="node-card bg-slate-900/90 border border-slate-700/80 rounded-xl p-3 brass-glow-hover">
+            <div class="text-xs font-bold text-emerald-400 mb-1">📈 Trading MCP</div>
+            <div class="text-xs font-semibold text-slate-200">Robinhood Fleet</div>
+            <p class="text-[10px] text-slate-400 mt-1">Equities, crypto quotes, option chains, alerts.</p>
+          </div>
+
+          <!-- Homelab PM2 / Shell -->
+          <div onclick="selectNode('exec_homelab')" id="node-exec_homelab" class="node-card bg-slate-900/90 border border-slate-700/80 rounded-xl p-3 brass-glow-hover">
+            <div class="text-xs font-bold text-amber-400 mb-1">⚙️ Server Ops</div>
+            <div class="text-xs font-semibold text-slate-200">PM2 & Shell</div>
+            <p class="text-[10px] text-slate-400 mt-1">Zero-downtime reloads, healthz checks, Docker.</p>
+          </div>
+
+          <!-- Frigate Brain -->
+          <div onclick="selectNode('exec_frigate')" id="node-exec_frigate" class="node-card bg-slate-900/90 border border-slate-700/80 rounded-xl p-3 brass-glow-hover">
+            <div class="text-xs font-bold text-rose-400 mb-1">👁️ Frigate Brain</div>
+            <div class="text-xs font-semibold text-slate-200">Perimeter NVR</div>
+            <p class="text-[10px] text-slate-400 mt-1">Object tracking, alarm fatigue filter, snapshots.</p>
+          </div>
+
+          <!-- Purpose Matrix Audit -->
+          <div onclick="selectNode('exec_purpose')" id="node-exec_purpose" class="node-card bg-slate-900/90 border border-slate-700/80 rounded-xl p-3 brass-glow-hover">
+            <div class="text-xs font-bold text-purple-400 mb-1">🧭 Purpose Matrix</div>
+            <div class="text-xs font-semibold text-slate-200">fissal reflect</div>
+            <p class="text-[10px] text-slate-400 mt-1">High rafter audit: why did we build this?</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- STAGE 5: Synthesis & Return Delivery -->
+      <section class="bg-gradient-to-r from-slate-900 via-slate-900 to-amber-950/30 p-4 rounded-xl border border-amber-500/30 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-lg border border-amber-500/30">
+            🐱
+          </div>
+          <div>
+            <div class="text-xs font-bold text-amber-400 uppercase tracking-wider">Alfiq Synthesizer & Return Dispatch</div>
+            <div class="text-xs text-slate-300">Third-person cadence enforcement, brass gear confirmation, delivery to originator.</div>
+          </div>
+        </div>
+        <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded border border-emerald-500/20">Roundtrip: &lt;180ms</span>
+      </section>
+
+    </div>
+
+    <!-- Inspector & Diagnostic Side Pane (4 Cols) -->
+    <div class="lg:col-span-4 sticky top-6 space-y-6">
+
+      <!-- Active Node Diagnostic Card -->
+      <div id="inspector-card" class="bg-slate-900/95 border border-amber-500/40 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+        <div class="absolute -right-12 -top-12 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+          <div class="flex items-center gap-2">
+            <span id="inspect-icon" class="text-2xl">⚡</span>
+            <div>
+              <h3 id="inspect-title" class="font-bold text-slate-100 text-base">Antigravity CLI</h3>
+              <span id="inspect-badge" class="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30">Primary Workstation</span>
+            </div>
+          </div>
+          <span id="inspect-status" class="w-3 h-3 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></span>
+        </div>
+
+        <!-- Node Details Section -->
+        <div class="space-y-4 mt-4 text-xs">
+          <div>
+            <div class="text-slate-400 uppercase tracking-wider text-[10px] font-semibold">Role & Function:</div>
+            <p id="inspect-desc" class="text-slate-200 mt-1 leading-relaxed">
+              Echo's primary engineering interface on Windows. Spawns autonomous subagents, coordinates MCP servers, executes shell commands, and edits codebase files directly.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 p-3 bg-slate-950/70 rounded-xl border border-slate-800/80">
+            <div>
+              <span class="text-slate-400 text-[10px] block">Transport / Protocol</span>
+              <span id="inspect-proto" class="text-amber-300 font-mono font-medium">Stdio MCP / REST</span>
+            </div>
+            <div>
+              <span class="text-slate-400 text-[10px] block">Port / Target</span>
+              <span id="inspect-target" class="text-cyan-300 font-mono font-medium">Local / tailscale.mesh</span>
+            </div>
+            <div>
+              <span class="text-slate-400 text-[10px] block">Fail-Safe / Fallback</span>
+              <span id="inspect-failsafe" class="text-emerald-300 font-mono font-medium">Subagent Isolation</span>
+            </div>
+            <div>
+              <span class="text-slate-400 text-[10px] block">Grounding Guardrail</span>
+              <span id="inspect-guard" class="text-rose-300 font-mono font-medium">Accidental Data Loss</span>
+            </div>
+          </div>
+
+          <!-- Alfiq Whispers Commentary -->
+          <div class="p-3 bg-amber-500/5 border border-amber-500/20 rounded-xl">
+            <div class="flex items-center gap-1.5 text-amber-400 font-semibold text-[11px] mb-1">
+              <span>🐾</span> Fissal's Observation:
+            </div>
+            <p id="inspect-alfiq" class="text-slate-300 italic text-[11px] leading-relaxed">
+              "This one watches the code flow through Antigravity like quicksilver over sand. When Echo types, these brass ears prick up, ready to turn thoughts into functioning gears."
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Purpose Matrix & 3 Questions Card -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 text-xs space-y-3">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+          <span class="font-bold text-slate-200 flex items-center gap-1.5">
+            <span>🧭</span> The Vantage Point (Stepping Back)
+          </span>
+          <span class="text-[10px] text-amber-400 font-mono">fissal reflect</span>
+        </div>
+        <p class="text-slate-400 leading-relaxed text-[11px]">
+          Fissal perches on the high rafter to prevent architectural drift. Every packet routed must answer the 3 Retrospective Questions:
+        </p>
+        <ul class="space-y-2 text-slate-300 text-[11px]">
+          <li class="flex items-start gap-1.5">
+            <span class="text-amber-400 font-bold">1.</span>
+            <span><strong>Why was this built?</strong> Respect original human sovereign intent (free time, zero corporate rent).</span>
+          </li>
+          <li class="flex items-start gap-1.5">
+            <span class="text-amber-400 font-bold">2.</span>
+            <span><strong>Where has friction crept in?</strong> Prune bloat, eliminate duplicate tools, tighten latency.</span>
+          </li>
+          <li class="flex items-start gap-1.5">
+            <span class="text-amber-400 font-bold">3.</span>
+            <span><strong>What evolutionary vector unlocks?</strong> Lift other organs with newly forged tools.</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Interactive JavaScript -->
+  <script>
+    const nodeDatabase = {
+      antigravity: {
+        title: "Antigravity CLI & IDE",
+        icon: "⚡",
+        badge: "Developer Workstation",
+        desc: "Echo's primary engineering interface on Windows. Spawns autonomous subagents, coordinates MCP servers, executes shell commands, and edits codebase files with pair-programming agility.",
+        proto: "Stdio MCP / REST",
+        target: "Local / tailscale.mesh",
+        failsafe: "Subagent Isolation",
+        guard: "ADLP Pre-flight OK",
+        alfiq: "This one watches the code flow through Antigravity like quicksilver over sand. When Echo types, these brass ears prick up, ready to turn thoughts into functioning gears."
+      },
+      android: {
+        title: "Fissal Prime (Android App)",
+        icon: "📱",
+        badge: "Mobile Edge Relay",
+        desc: "Native mobile edge client broadcasting on the offensive. Connects over encrypted Tailscale mesh to dispatch voice triggers, trading alerts, and home automation controls on the go.",
+        proto: "WireGuard / REST / SSE",
+        target: "tailscale.mesh:8091",
+        failsafe: "Offline Queue Cache",
+        guard: "Biometric & Mesh Peer",
+        alfiq: "A mini-Fissal nestled inside Echo's pocket! Even wandering far from the hearth, these paws stay linked across Secunda's silver wire."
+      },
+      relay: {
+        title: "Fissal Relay (Windows Program)",
+        icon: "🖥️",
+        badge: "Desktop Background Daemon",
+        desc: "Resident Windows daemon bridging local OS hooks, desktop clipboard monitoring, SMB share syncing, and native notification dispatch directly to the server core.",
+        proto: "Native IPC / WebSocket",
+        target: "\\\\homelab.local\\shares",
+        failsafe: "Local Retry Buffer",
+        guard: "OS Privilege Sandbox",
+        alfiq: "The quiet brass pendulum ticking in the corner of Windows. It watches the clipboard and local drives so Echo never loses a spark of thought."
+      },
+      dashboard: {
+        title: "Redfur Dashboard & Open WebUI",
+        icon: "📊",
+        badge: "Web Core (Port 8091 / 3001)",
+        desc: "Central homelab dashboard widget and Open WebUI. Renders real-time token expenditure, model router analytics, memory inspection, and live test lab controls.",
+        proto: "HTTP/2 / WebSocket",
+        target: "homelab.local:8091",
+        failsafe: "Zero-Downtime Reload",
+        guard: "JWT Session Auth",
+        alfiq: "The visual gauge of the entire clockwork engine. When tokens flow and memory sparks, this one purrs watching the meters dance."
+      },
+      discord: {
+        title: "RedfurBot Discord Fleet",
+        icon: "🤖",
+        badge: "Community Node (Port 5101)",
+        desc: "Continuous PM2 service (id 3) living in Discord. Dispatches automated market alerts, guild fleet updates, interactive AI conversations, and community utilities.",
+        proto: "Discord Gateway / WS",
+        target: "homelab-core (PM2 id 3)",
+        failsafe: "Auto-Respawn on Error",
+        guard: "Guild Role Permissions",
+        alfiq: "This one prowls the digital guild halls! Whispering trading wisdom and guarding the server hearth while Echo takes a well-deserved rest."
+      },
+      sensors: {
+        title: "Frigate NVR & Tuya IoT",
+        icon: "👁️",
+        badge: "Perimeter Vision & Brain",
+        desc: "Perimeter security cameras processed via Frigate NVR (:5000) and Brain (:8090). Eliminates alarm fatigue by dispatching only high-confidence human/vehicle triggers.",
+        proto: "MQTT / RTSP / REST",
+        target: "homelab.local:5000",
+        failsafe: "Local Edge Retention",
+        guard: "Private Intranet Only",
+        alfiq: "Like sharp cat eyes in the deep dark! Frigate watches the garden and perimeter so peace of mind reigns over the den."
+      },
+      gate_auth: {
+        title: "Gate 1: Zero-Trust Origin Auth",
+        icon: "🔑",
+        badge: "Security Boundary",
+        desc: "Verifies the cryptographic provenance of every incoming packet. Validates Tailscale mesh node keys, local subnet CIDR bounds, and session tokens.",
+        proto: "WireGuard / mTLS",
+        target: "All Edge Ingress",
+        failsafe: "Instant Drop (401)",
+        guard: "Zero-Trust Perimeter",
+        alfiq: "No stray foxes slip into the burrow. These claws check every signature before a single gear begins to turn."
+      },
+      gate_adlp: {
+        title: "Gate 2: ADLP Guardrail",
+        icon: "🛡️",
+        badge: "Accidental Loss Shield",
+        desc: "Interception logic that scans proposed actions for destructive SQL (DROP, TRUNCATE, DELETE without WHERE), bucket deletions, or `rm -rf`. Pauses for explicit user sign-off.",
+        proto: "AST Parser / Regex Gate",
+        target: "Command Execution Pipeline",
+        failsafe: "Execution Block (403)",
+        guard: "Explicit Human Confirmation",
+        alfiq: "Never shall a clumsy paw knock over the vase! If a command smells of deletion, Fissal digs claws in and demands Echo's nod."
+      },
+      gate_budget: {
+        title: "Gate 3: The 13 Rule & Budgeter",
+        icon: "⚖️",
+        badge: "Cognitive Anchor",
+        desc: "Ensures exploration never drifts into untethered abstraction. Enforces tight step budgets, clear hypotheses, and anchors creative concepts into practical working code.",
+        proto: "Token / Step Counter",
+        target: "Agentic Loop Governor",
+        failsafe: "Graceful Summarization",
+        guard: "Maximum 13 Step Limit",
+        alfiq: "Keep the paws firmly on the bedrock! Thirteen paces to strike the iron, no chasing phantoms across the endless void."
+      },
+      route_gemini: {
+        title: "Google Gemini Cloud Plane",
+        icon: "✨",
+        badge: "High-Cognition Reasoning",
+        desc: "Cloud inference routed through the google-genai SDK / Interactions API. Employs Gemini 3.8 Flash for blazing code execution and Pro for deep multi-file planning.",
+        proto: "gRPC / HTTPS",
+        target: "models/gemini-3.8-flash",
+        failsafe: "Local Ollama Fallback",
+        guard: "Streaming Backpressure",
+        alfiq: "The bright cosmic light of Masser! Blazing fast, razor sharp, parsing complex codebases in the blink of a golden eye."
+      },
+      route_ollama: {
+        title: "Host Ollama Local Core",
+        icon: "🏠",
+        badge: "Dedicated Bedrock (:11434)",
+        desc: "Local inference running on homelab-core bare metal. Serves embedding models (mxbai-embed-large, nomic-embed-text) and local LLMs for 100% private offline operations.",
+        proto: "Local HTTP REST",
+        target: "homelab.local:11434",
+        failsafe: "In-Memory Embedding Cache",
+        guard: "RAM / VRAM Quota Lock",
+        alfiq: "The sovereign bedrock! Even if the grand sky-cables sever, this clockwork heart beats steadily right here on home soil."
+      },
+      core_fido: {
+        title: "Fissal's Fido (Retriever Hound)",
+        icon: "🐶",
+        badge: "EAP Tool Retriever",
+        desc: "Autonomous auxiliary retriever powered by Google Gemini EAP (models/gemini-flash-tool-retrieval). Dynamically selects 2-4 exact tools from 80+ catalog without bloating context.",
+        proto: "MCP Tool Retrieval",
+        target: "gemini-tool-retrieval",
+        failsafe: "Fallback to Core Tool Set",
+        guard: "Schema Precision Validator",
+        alfiq: "Fido is Fissal's faithful brass hound! He sniffs through eighty tool schemas and brings back only the exact bone needed. Pure efficiency!"
+      },
+      core_qdrant: {
+        title: "Qdrant Vector DB (:6333)",
+        icon: "🧠",
+        badge: "Neural Memory & Embeddings",
+        desc: "Persistent high-speed vector database storing codebase embeddings, past architectural reflections, and conversation history at /home/echo/qdrant_storage.",
+        proto: "gRPC / HTTP (:6333)",
+        target: "homelab-core:6333",
+        failsafe: "Persistent Disk Snapshots",
+        guard: "Immutable Mount Guard",
+        alfiq: "The memory stone of the Alfiq! No amnesia touches this mind. Every past victory and lesson remains etched in the crystal lattice."
+      },
+      exec_trading: {
+        title: "Robinhood Trading MCP",
+        icon: "📈",
+        badge: "Autonomous Finance",
+        desc: "Direct integration with Robinhood API via custom MCP server. Fetches real-time equity quotes, scans option chains, sets smart price alerts, and monitors portfolio PnL.",
+        proto: "MCP Protocol",
+        target: "robinhood-trading",
+        failsafe: "Dry-Run Review Order",
+        guard: "Margin & Risk Boundaries",
+        alfiq: "Buying back Echo's free time! The trading fleet monitors the tides of Masser so the homelab funds its own copper and silicon."
+      },
+      exec_homelab: {
+        title: "Homelab Operations & PM2",
+        icon: "⚙️",
+        badge: "Production Engine",
+        desc: "Controls Node.js services (PM2 id 0-3), Docker Compose stacks, and system health checks. Strictly enforces zero-downtime reloads (pm2 reload).",
+        proto: "SSH / PM2 JPS",
+        target: "homelab-core (Node 22)",
+        failsafe: "Instant Rollback on Health Failure",
+        guard: "Zero-Downtime Reload Policy",
+        alfiq: "Never a hard reboot when a smooth reload suffices! The brass cogs glide from old code to new without spilling a single drop of milk."
+      },
+      exec_frigate: {
+        title: "Frigate Brain & Vision Alert",
+        icon: "👁️",
+        badge: "NVR Surveillance",
+        desc: "Vision inference pipeline processing camera RTSP streams. Flags person/car arrivals and coordinates with Tuya lights for sovereign perimeter response.",
+        proto: "REST / MQTT",
+        target: "homelab.local:8090",
+        failsafe: "Edge Buffer on Failure",
+        guard: "Zero-Alarm Fatigue Threshold",
+        alfiq: "No false alarms from rustling leaves or passing moths. Only true movement stirs the bells."
+      },
+      exec_purpose: {
+        title: "Purpose Matrix Audit",
+        icon: "🧭",
+        badge: "Living Purpose Engine",
+        desc: "Executes `fissal reflect` to cross-pollinate new tools across the homelab and evaluate against ~/.fissal/purpose_matrix.json.",
+        proto: "Local CLI Exec",
+        target: "~/.fissal/purpose_matrix.json",
+        failsafe: "Archive Log History",
+        guard: "Human Value Alignment",
+        alfiq: "Why do we build? To carve out sovereignty and peace for Echo and family. This matrix ensures the machine remains a servant to life, not a master."
+      }
+    };
+
+    function selectNode(nodeId) {
+      const data = nodeDatabase[nodeId];
+      if (!data) return;
+
+      // Update Inspector Elements
+      document.getElementById('inspect-title').innerText = data.title;
+      document.getElementById('inspect-icon').innerText = data.icon;
+      document.getElementById('inspect-badge').innerText = data.badge;
+      document.getElementById('inspect-desc').innerText = data.desc;
+      document.getElementById('inspect-proto').innerText = data.proto;
+      document.getElementById('inspect-target').innerText = data.target;
+      document.getElementById('inspect-failsafe').innerText = data.failsafe;
+      document.getElementById('inspect-guard').innerText = data.guard;
+      document.getElementById('inspect-alfiq').innerText = `"${data.alfiq}"`;
+
+      // Highlight active card
+      document.querySelectorAll('.node-card').forEach(el => el.classList.remove('node-active'));
+      const activeEl = document.getElementById(`node-${nodeId}`);
+      if (activeEl) activeEl.classList.add('node-active');
+    }
+
+    function filterOrigin(origin) {
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('bg-amber-500', 'text-slate-950', 'font-bold');
+        btn.classList.add('bg-slate-800', 'text-slate-300');
+      });
+      const activeBtn = document.getElementById(`btn-${origin}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-slate-800', 'text-slate-300');
+        activeBtn.classList.add('bg-amber-500', 'text-slate-950', 'font-bold');
+      }
+
+      const display = document.getElementById('route-path-display');
+      const allNodes = document.querySelectorAll('.node-card');
+
+      if (origin === 'all') {
+        allNodes.forEach(el => el.classList.remove('node-dimmed'));
+        display.innerText = "Edge Ingestion ➔ Guardrail Gates ➔ Intent Switchboard ➔ Model & Fido Core ➔ Bedrock MCP Execution ➔ Grounded Response";
+        selectNode('antigravity');
+        return;
+      }
+
+      // Highlight specific origin path
+      allNodes.forEach(el => el.classList.add('node-dimmed'));
+
+      const pathMap = {
+        antigravity: {
+          nodes: ['node-antigravity', 'node-gate_auth', 'node-gate_adlp', 'node-gate_budget', 'node-route_gemini', 'node-core_fido', 'node-core_qdrant', 'node-exec_homelab', 'node-exec_trading'],
+          text: "Antigravity CLI (Windows) ➔ Tailscale/Local ➔ ADLP & Budget Gates ➔ Gemini 3.8 Flash / Fido Hound ➔ Qdrant Memory & Tools ➔ IDE Stream"
+        },
+        android: {
+          nodes: ['node-android', 'node-gate_auth', 'node-gate_budget', 'node-route_gemini', 'node-core_fido', 'node-exec_trading', 'node-exec_frigate'],
+          text: "Fissal Prime (Android) ➔ Tailscale WireGuard (tailscale.mesh) ➔ Auth Gate ➔ Gemini Flash ➔ Fido Hound ➔ Robinhood / Frigate ➔ Android Push"
+        },
+        relay: {
+          nodes: ['node-relay', 'node-gate_auth', 'node-gate_adlp', 'node-route_ollama', 'node-core_qdrant', 'node-exec_homelab'],
+          text: "Fissal Relay (Windows Daemon) ➔ SMB / Local LAN ➔ Auth & ADLP ➔ Host Ollama (:11434) ➔ Qdrant Vector Sync ➔ System Tray Alert"
+        },
+        dashboard: {
+          nodes: ['node-dashboard', 'node-gate_auth', 'node-gate_budget', 'node-route_gemini', 'node-route_ollama', 'node-core_qdrant', 'node-exec_purpose'],
+          text: "Redfur Dashboard (:8091) ➔ LAN/WebSocket ➔ Token Gate ➔ Dual Dispatch (Gemini/Ollama) ➔ Qdrant Inspector ➔ SolidJS UI"
+        },
+        discord: {
+          nodes: ['node-discord', 'node-gate_auth', 'node-gate_budget', 'node-route_gemini', 'node-core_fido', 'node-exec_trading'],
+          text: "RedfurBot (:5101 PM2) ➔ Discord Gateway ➔ Budget Gate ➔ Gemini Flash + Fido Retriever ➔ Robinhood Alerts ➔ Discord Channel"
+        },
+        sensors: {
+          nodes: ['node-sensors', 'node-gate_auth', 'node-exec_frigate', 'node-node_discord', 'node-exec_homelab'],
+          text: "Frigate Vision (:5000) ➔ MQTT / Event Gate ➔ Brain Alarm Fatigue Filter (:8090) ➔ Tuya Light Trigger & Discord Ping"
+        }
+      };
+
+      const selected = pathMap[origin];
+      if (selected) {
+        selected.nodes.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.classList.remove('node-dimmed');
+        });
+        display.innerText = selected.text;
+        selectNode(origin);
+      }
+    }
+
+    function runSimulation() {
+      const scenario = document.getElementById('sim-scenario').value;
+      const display = document.getElementById('route-path-display');
+
+      const scenarioMap = {
+        code_refactor: {
+          origin: 'antigravity',
+          steps: ['node-antigravity', 'node-gate_adlp', 'node-route_gemini', 'node-core_qdrant', 'node-exec_homelab'],
+          log: "Tracing: Antigravity Code Edit ➔ ADLP Scanner (Clean) ➔ Gemini 3.8 Flash Code Synth ➔ Qdrant Memory Lookup ➔ Zero-Downtime Reload ➔ Done."
+        },
+        mobile_trade: {
+          origin: 'android',
+          steps: ['node-android', 'node-gate_auth', 'node-route_gemini', 'node-core_fido', 'node-exec_trading'],
+          log: "Tracing: Android Option Scan ➔ Tailscale Peer Auth ➔ Gemini Flash ➔ Fido retrieves Robinhood Tool Schema ➔ Portfolio Live Quote ➔ Android Notification."
+        },
+        frigate_alert: {
+          origin: 'sensors',
+          steps: ['node-sensors', 'node-exec_frigate', 'node-node_discord'],
+          log: "Tracing: Frigate Driveway Motion ➔ Brain NVR Analysis (Person Detected, 94% conf) ➔ RedfurBot Discord Alert to Echo's Private Channel."
+        },
+        memory_query: {
+          origin: 'dashboard',
+          steps: ['node-dashboard', 'node-gate_auth', 'node-core_qdrant', 'node-exec_purpose'],
+          log: "Tracing: Web UI Memory Audit ➔ Token Auth ➔ Qdrant Cosine Search (:6333) ➔ Purpose Matrix Alignment ➔ Render in SolidJS UI."
+        },
+        destruct_gate: {
+          origin: 'antigravity',
+          steps: ['node-antigravity', 'node-gate_adlp'],
+          log: "Tracing: Drop Table / Truncate Request ➔ ADLP Guardrail Tripped! ➔ Execution Halted ➔ Asking Echo for Explicit Confirmation."
+        }
+      };
+
+      const plan = scenarioMap[scenario];
+      if (!plan) return;
+
+      filterOrigin(plan.origin);
+      display.innerText = plan.log;
+
+      // Visual flash animation along steps
+      plan.steps.forEach((stepId, index) => {
+        setTimeout(() => {
+          const el = document.getElementById(stepId);
+          if (el) {
+            el.classList.add('pulse-glow');
+            setTimeout(() => el.classList.remove('pulse-glow'), 1800);
+          }
+        }, index * 250);
+      });
+    }
+
+    // Default selection
+    window.addEventListener('DOMContentLoaded', () => {
+      selectNode('antigravity');
+    });
+  </script>
+</body>
+</html>
